@@ -1,0 +1,7 @@
+! État final poussé par l'outil - R3-SL - EIGRP AS 100
+! Site ajouté via l'extension bonus 3-sites (aucune modification de code requise,
+! uniquement un bloc supplémentaire dans inventory.yaml)
+router eigrp 100
+ network 10.30.30.0 0.0.0.255
+ network 192.168.100.0 0.0.0.255
+ no auto-summary

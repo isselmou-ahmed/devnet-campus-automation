@@ -1,0 +1,6 @@
+! État final poussé par l'outil - R2-ABJ - EIGRP AS 100
+no router ospf 1
+router eigrp 100
+ network 10.20.20.0 0.0.0.255
+ network 192.168.100.0 0.0.0.255
+ no auto-summary

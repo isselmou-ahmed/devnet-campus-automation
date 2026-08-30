@@ -1,0 +1,59 @@
+# inventory.yaml
+# Inventaire externalisé du réseau campus multi-sites.
+# Ajouter un site = ajouter un bloc ici, sans toucher au code (src/*.py).
+
+settings:
+  eigrp_as: 100
+  backup_dir: backups/
+  log_dir: logs/
+  ssh_port: 22
+  device_timeout: 20
+
+sites:
+  - name: Dakar
+    router: R1-DKR
+    host: 192.168.100.1
+    vlan: 10
+    network: 10.10.10.0/24
+    gateway: 10.10.10.1
+    switches:
+      - name: SW1-CORE
+        host: 192.168.100.11
+        role: coeur
+        access_ports: []
+      - name: SW3-ACC
+        host: 192.168.100.13
+        role: acces
+        access_ports: ["GigabitEthernet0/1", "GigabitEthernet0/2"]
+
+  - name: Abidjan
+    router: R2-ABJ
+    host: 192.168.100.2
+    vlan: 20
+    network: 10.20.20.0/24
+    gateway: 10.20.20.1
+    switches:
+      - name: SW2-CORE
+        host: 192.168.100.12
+        role: coeur
+        access_ports: []
+      - name: SW4-ACC
+        host: 192.168.100.14
+        role: acces
+        access_ports: ["GigabitEthernet0/1", "GigabitEthernet0/2"]
+
+  - name: Saint-Louis
+    router: R3-SL
+    host: 192.168.100.3
+    vlan: 30
+    network: 10.30.30.0/24
+    gateway: 10.30.30.1
+    switches:
+      - name: SW5-ACC
+        host: 192.168.100.15
+        role: acces
+        access_ports: ["GigabitEthernet0/1", "GigabitEthernet0/2"]
+
+backbone:
+  network: 192.168.100.0/24
+  description: "Backbone WAN commun aux 3 sites (sert aussi de réseau de management)"
