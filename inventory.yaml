@@ -51,6 +51,7 @@ sites:
   - name: Saint-Louis
     router: R3-SL
     host: 192.168.10.3
+    device_type: cisco_ios
     vlan: 30
     network: 10.30.30.0/24
     gateway: 10.30.30.1
