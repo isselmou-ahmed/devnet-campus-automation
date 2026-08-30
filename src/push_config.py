@@ -43,7 +43,7 @@ def _push_router_eigrp(net_connect, device, eigrp_as, logger):
         "no router ospf 1",
         f"router eigrp {eigrp_as}",
         f"network {device['network'].split('/')[0]} 0.0.0.255",
-        "network 192.168.100.0 0.0.0.255",
+        "network 192.168.10.0 0.0.0.255",
         "no auto-summary",
     ]
     output = net_connect.send_config_set(commands)
