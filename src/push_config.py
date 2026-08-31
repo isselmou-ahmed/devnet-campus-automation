@@ -30,8 +30,12 @@ def _connect_with_autodetect(device):
 	k: v for k, v in device.items() 
 	 if k not in EXCLUDED_KEYS
 }
+    base_params["disabled_algorithms"] = {
+            "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"]
+    }
     guesser = SSHDetect(**{**base_params, "device_type": "autodetect"}) 
     best_match = guesser.autodetect()
+  
     conn_params = dict(base_params)
     conn_params["device_type"] = best_match or "cisco_ios"
     return ConnectHandler(**conn_params)
