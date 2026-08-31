@@ -38,7 +38,6 @@ def _connect_with_autodetect(device):
   
     conn_params = dict(base_params)
     conn_params["device_type"] = best_match or "cisco_ios"
-    conn_params["device_type"] = best_match or "cisco_ios"
     conn_params["session_log"] = f"logs/{device['expected_hostname']}.log"
     return ConnectHandler(**conn_params)
 
@@ -106,7 +105,7 @@ def deploy(devices, settings, logger):
             else:
                 logger.warning(f"[{label}] Rôle non reconnu ({real_hostname}), aucune action.")
 
-            net_connect.save_config()
+            net_connect.save_config(confirm=True, confirm_response="\n")
             net_connect.disconnect()
 
             resultats[real_hostname] = "OK"
