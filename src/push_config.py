@@ -38,6 +38,8 @@ def _connect_with_autodetect(device):
   
     conn_params = dict(base_params)
     conn_params["device_type"] = best_match or "cisco_ios"
+    conn_params["device_type"] = best_match or "cisco_ios"
+    conn_params["session_log"] = f"logs/{device['expected_hostname']}.log"
     return ConnectHandler(**conn_params)
 
 
@@ -50,7 +52,7 @@ def _push_router_eigrp(net_connect, device, eigrp_as, logger):
         "network 192.168.10.0 0.0.0.255",
         "no auto-summary",
     ]
-    output = net_connect.send_config_set(commands)
+    output = net_connect.send_config_set(commands, read_timeout=45)
     logger.debug(output)
 
 
@@ -68,7 +70,7 @@ def _push_switch_config(net_connect, device, logger):
             "spanning-tree bpduguard enable",
             "exit",
         ]
-    output = net_connect.send_config_set(commands)
+    output = net_connect.send_config_set(commands, read_timeout=45)
     logger.debug(output)
 
 
@@ -83,6 +85,12 @@ def deploy(devices, settings, logger):
         label = f"{device['site']} / {device['expected_hostname']}"
         try:
             net_connect = _connect_with_autodetect(device)
+
+            # Doit être fait AVANT tout push de config : évite que des messages
+            # console asynchrones (%DUAL-5-NBRCHANGE, %LINK-3-UPDOWN, etc.) ne
+            # viennent perturber la détection du prompt par Netmiko.
+            net_connect.send_config_set(["no logging console"], read_timeout=20)
+
             real_hostname = net_connect.find_prompt().strip("#>")
             role = detect_role(real_hostname)
 

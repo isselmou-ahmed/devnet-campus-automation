@@ -3,5 +3,5 @@
 ! uniquement un bloc supplémentaire dans inventory.yaml)
 router eigrp 100
  network 10.30.30.0 0.0.0.255
- network 192.168.10.0 0.0.0.255
+ network 192.168.20.0 0.0.0.255
  no auto-summary
