@@ -23,15 +23,12 @@ from src.utils import backup_running_config, detect_role
 
 def _connect_with_autodetect(device):
     """SSHDetect : identifie le device_type sans saisie manuelle, puis se connecte."""
-    guesser = SSHDetect(**{k: v for k, v in device.items() if k not in (
-        "kind", "site", "expected_hostname", "vlan", "network", "gateway",
-        "role", "access_ports",
-    )})
+    base_params = { k: v for k, v in device.items() }
+    guesser = SSHDetect(**{**base_params, "device_type": "autodetect"}) 
     best_match = guesser.autodetect()
     conn_params = {
         k: v for k, v in device.items()
-        if k not in ("kind", "site", "expected_hostname", "vlan", "network",
-                      "gateway", "role", "access_ports")
+        if k not in ("kind", "site", "expected_hostname", "vlan",  "gateway", "role", "access_ports")
     }
     conn_params["device_type"] = best_match or "cisco_ios"
     return ConnectHandler(**conn_params)
