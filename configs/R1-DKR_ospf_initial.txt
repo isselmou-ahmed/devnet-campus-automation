@@ -1,4 +1,4 @@
 ! État initial du lab - R1-DKR - OSPF area 0
 router ospf 1
  network 10.10.10.0 0.0.0.255 area 0
- network 192.168.20.0 0.0.0.255 area 0
+ network 192.168.10.0 0.0.0.255 area 0
