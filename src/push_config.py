@@ -51,7 +51,7 @@ def _push_router_eigrp(net_connect, device, eigrp_as, logger):
         "network 192.168.10.0 0.0.0.255",
         "no auto-summary",
     ]
-    output = net_connect.send_config_set(commands, read_timeout=45)
+    output = net_connect.send_config_set(commands, read_timeout=60)
     logger.debug(output)
 
 

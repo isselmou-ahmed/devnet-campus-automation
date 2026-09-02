@@ -1,4 +1,4 @@
 ! État initial du lab - R2-ABJ - OSPF area 0
 router ospf 1
  network 10.20.20.0 0.0.0.255 area 0
- network 192.168.20.0 0.0.0.255 area 0
+ network 192.168.10.0 0.0.0.255 area 0
