@@ -56,11 +56,16 @@ sites:
     network: 10.30.30.0/24
     gateway: 10.30.30.1
     switches:
-      - name: SW5-ACC
-        host: 192.168.10.15
-        device_type: cisco_ios
-        role: acces
-        access_ports: ["Ethernet0/1", "Ethernet0/2"]
+        - name: SW3-CORE
+          host: 192.168.10.15
+          device_type: cisco_ios
+          role: coeur
+          access_ports: []
+        - name: SW5-ACC
+          host: 192.168.10.16
+          device_type: cisco_ios
+          role: acces
+          access_ports: ["Ethernet0/1", "Ethernet0/2"]
 
 backbone:
   network: 192.168.10.0/24
