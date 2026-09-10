@@ -26,7 +26,7 @@ def _connect_with_autodetect(device):
     """SSHDetect : identifie le device_type sans saisie manuelle, puis se connecte."""
     EXCLUDED_KEYS = (
         "kind", "network", "site", "expected_hostname", "vlan", "gateway",
-        "role", "access_ports", "static_routes", "switches",
+        "role", "access_ports", "lan_interface", "static_routes", "switches",
     )
     base_params = {
         k: v for k, v in device.items()
