@@ -49,7 +49,7 @@ def build_device_list(config):
                 {
                     "kind": "switch",
                     "site": site["name"],
-                    "expected_hostname": sw["name"],
+                    "expected_hostname": sw.get("name", "nom-par-defaut"),
                     "host": sw["host"],
                     "role": sw["role"],
                     "vlan": site["vlan"],
