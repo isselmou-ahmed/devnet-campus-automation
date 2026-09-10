@@ -4,8 +4,9 @@ Cœur de l'automatisation : pour chaque équipement de l'inventaire,
 - détecte le device_type via SSHDetect (aucune saisie manuelle),
 - lit le hostname réel via find_prompt() et en déduit le rôle,
 - sauvegarde le running-config avant toute modification,
-- pousse la configuration adaptée au rôle (routeur -> EIGRP ; switch -> VLAN
-  + ports d'accès + PortFast/BPDU Guard ; jamais PortFast sur un uplink/trunk),
+- pousse la configuration adaptée au rôle (routeur -> interface LAN + EIGRP ;
+  switch -> VLAN + ports d'accès + PortFast/BPDU Guard ; jamais PortFast sur
+  un uplink/trunk),
 - sauvegarde la configuration (save_config) et journalise le résultat.
 Une panne sur un équipement (SSH, auth, timeout) est capturée et journalisée
 sans interrompre le traitement des autres équipements.
@@ -25,21 +26,28 @@ def _connect_with_autodetect(device):
     """SSHDetect : identifie le device_type sans saisie manuelle, puis se connecte."""
     EXCLUDED_KEYS = (
         "kind", "network", "site", "expected_hostname", "vlan", "gateway", "role", "access_ports"
-)
-    base_params = { 
-	k: v for k, v in device.items() 
-	 if k not in EXCLUDED_KEYS
-}
-    base_params["disabled_algorithms"] = {
-            "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"]
+    )
+    base_params = {
+        k: v for k, v in device.items()
+        if k not in EXCLUDED_KEYS
     }
-    guesser = SSHDetect(**{**base_params, "device_type": "autodetect"}) 
+    base_params["disabled_algorithms"] = {
+        "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"]
+    }
+    guesser = SSHDetect(**{**base_params, "device_type": "autodetect"})
     best_match = guesser.autodetect()
-  
+
     conn_params = dict(base_params)
     conn_params["device_type"] = best_match or "cisco_ios"
     conn_params["session_log"] = f"logs/{device['expected_hostname']}.log"
     return ConnectHandler(**conn_params)
+
+
+def _push_router_interface_from_file(net_connect, device, logger):
+    """Pousse la config d'interface LAN du routeur depuis un fichier externe."""
+    config_file = f"configs/{device['router']}_eigrp.txt"
+    output = net_connect.send_config_from_file(config_file)
+    logger.debug(output)
 
 
 def _push_router_eigrp(net_connect, device, eigrp_as, logger):
@@ -99,6 +107,7 @@ def deploy(devices, settings, logger):
             logger.info(f"[{label}] Sauvegarde effectuée -> {backup_path}")
 
             if role == "routeur":
+                _push_router_interface_from_file(net_connect, device, logger)
                 _push_router_eigrp(net_connect, device, settings["eigrp_as"], logger)
             elif role in ("switch_coeur", "switch_acces"):
                 _push_switch_config(net_connect, device, logger)
