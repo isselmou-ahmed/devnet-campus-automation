@@ -28,7 +28,7 @@ sites:
         device_type: cisco_ios
         role: acces
         access_ports: ["Ethernet0/1", "Ethernet0/2"]
-      - static_routes:
+    static_routes:
         - prefix: 10.20.20.0
           mask: 255.255.255.0
           next_hop: 192.168.10.2
@@ -55,7 +55,7 @@ sites:
         device_type: cisco_ios
         role: acces
         access_ports: ["Ethernet0/1", "Ethernet0/2"]
-      - static_routes:
+    static_routes:
         - prefix: 10.10.10.0
           mask: 255.255.255.0
           next_hop: 192.168.10.1
