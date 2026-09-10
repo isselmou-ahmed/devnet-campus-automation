@@ -41,6 +41,7 @@ def build_device_list(config):
                 "vlan": site["vlan"],
                 "network": site["network"],
                 "gateway": site["gateway"],
+                "lan_interface": site["lan_interface"],
                 **base,
             }
         )
