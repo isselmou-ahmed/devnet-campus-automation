@@ -55,6 +55,7 @@ def build_device_list(config):
                     "role": sw["role"],
                     "vlan": site["vlan"],
                     "access_ports": sw.get("access_ports", []),
+                    "trunk_ports": sw.get("trunk_ports", []),
                     **base,
                 }
             )

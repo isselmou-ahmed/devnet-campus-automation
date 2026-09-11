@@ -5,8 +5,9 @@ Cœur de l'automatisation : pour chaque équipement de l'inventaire,
 - lit le hostname réel via find_prompt() et en déduit le rôle,
 - sauvegarde le running-config avant toute modification,
 - pousse la configuration adaptée au rôle (routeur -> interface LAN (IP
-  définie dans inventory.yaml) + EIGRP ; switch -> VLAN + ports d'accès +
-  PortFast/BPDU Guard ; jamais PortFast sur un uplink/trunk),
+  définie dans inventory.yaml) + EIGRP ; switch -> VLAN + trunks explicites
+  (dot1q forcé, jamais de négociation DTP) + ports d'accès (PortFast/BPDU
+  Guard, jamais sur un trunk)),
 - sauvegarde la configuration (save_config) et journalise le résultat.
 Une panne sur un équipement (SSH, auth, timeout) est capturée et journalisée
 sans interrompre le traitement des autres équipements.
@@ -21,26 +22,24 @@ from netmiko import (
 
 from src.utils import backup_running_config, detect_role
 
+# Clés de l'inventaire qui décrivent le site/l'équipement mais ne sont pas
+# des paramètres de connexion Netmiko. Doit rester synchronisée avec
+# _EXCLUDED_KEYS dans verify.py.
+EXCLUDED_KEYS = (
+    "kind", "network", "site", "expected_hostname", "vlan", "gateway",
+    "role", "access_ports", "lan_interface", "trunk_ports",
+    "static_routes", "switches",
+)
+
 
 def _connect_with_autodetect(device):
     """SSHDetect : identifie le device_type sans saisie manuelle, puis se connecte."""
-    EXCLUDED_KEYS = (
-        "kind", "network", "site", "expected_hostname", "vlan", "gateway",
-        "role", "access_ports", "lan_interface", "static_routes", "switches",
-    )
     base_params = {
         k: v for k, v in device.items()
         if k not in EXCLUDED_KEYS
     }
     base_params["disabled_algorithms"] = {
-        "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"],
-        "kex": [
-            "diffie-hellman-group16-sha512",
-            "diffie-hellman-group-exchange-sha256",
-            "diffie-hellman-group14-sha256",
-            "diffie-hellman-group18-sha512",
-        ],
-
+        "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"]
     }
     guesser = SSHDetect(**{**base_params, "device_type": "autodetect"})
     best_match = guesser.autodetect()
@@ -83,9 +82,24 @@ def _push_router_eigrp(net_connect, device, eigrp_as, logger):
 
 
 def _push_switch_config(net_connect, device, logger):
-    """Crée le VLAN du site, l'assigne aux ports d'accès (PortFast + BPDU Guard)."""
+    """
+    Crée le VLAN du site, configure les trunks vers les équipements voisins
+    (encapsulation dot1q forcée, pas de négociation DTP) et assigne les
+    ports d'accès (PortFast + BPDU Guard). Les deux catégories de ports
+    sont toujours traitées séparément : PortFast/BPDU Guard ne doit jamais
+    être poussé sur un port trunk/uplink.
+    """
     vlan_id = device["vlan"]
     commands = [f"vlan {vlan_id}", f"name SITE_{device['site'].upper()}", "exit"]
+
+    for trunk_port in device.get("trunk_ports", []):
+        commands += [
+            f"interface {trunk_port}",
+            "switchport trunk encapsulation dot1q",
+            "switchport mode trunk",
+            f"switchport trunk allowed vlan add {vlan_id}",
+            "exit",
+        ]
 
     for port in device.get("access_ports", []):
         commands += [

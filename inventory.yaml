@@ -30,11 +30,13 @@ sites:
         host: 192.168.10.11
         device_type: cisco_ios
         role: coeur
-        access_ports: [Ethernet0/0]
+        trunk_ports: ["Ethernet0/1"]
+        access_ports: ["Ethernet0/0"]
       - name: SW3-ACC
         host: 192.168.10.13
         device_type: cisco_ios
         role: acces
+        trunk_ports: ["Ethernet0/0"]
         access_ports: ["Ethernet0/1", "Ethernet0/2"]
     
 
@@ -59,11 +61,13 @@ sites:
         host: 192.168.10.12
         device_type: cisco_ios
         role: coeur
-        access_ports: [Ethernet0/0]
+        trunk_ports: ["Ethernet0/1"]
+        access_ports: ["Ethernet0/0"]
       - name: SW4-ACC
         host: 192.168.10.14
         device_type: cisco_ios
         role: acces
+        trunk_ports: ["Ethernet0/0"]
         access_ports: ["Ethernet0/1", "Ethernet0/2"]
     
 
@@ -88,11 +92,13 @@ sites:
           host: 192.168.10.15
           device_type: cisco_ios
           role: coeur
-          access_ports: [Ethernet0/0]
+          trunk_ports: ["Ethernet0/1"]
+          access_ports: ["Ethernet0/0"]
         - name: SW5-ACC
           host: 192.168.10.16
           device_type: cisco_ios
           role: acces
+          trunk_ports: ["Ethernet0/0"]
           access_ports: ["Ethernet0/1", "Ethernet0/2"]
 
     

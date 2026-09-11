@@ -7,6 +7,15 @@ synthèse final (statut par équipement + test de connectivité inter-sites).
 
 from netmiko import ConnectHandler
 
+# Clés de l'inventaire qui décrivent le site/l'équipement mais ne sont pas
+# des paramètres de connexion Netmiko. Doit rester synchronisée avec
+# EXCLUDED_KEYS dans push_config.py.
+_EXCLUDED_KEYS = (
+    "kind", "site", "expected_hostname", "vlan", "network",
+    "gateway", "role", "access_ports", "lan_interface", "trunk_ports",
+    "static_routes", "switches",
+)
+
 
 def verify_device(device, checks, logger):
     """
@@ -15,8 +24,7 @@ def verify_device(device, checks, logger):
     """
     conn_params = {
         k: v for k, v in device.items()
-        if k not in ("kind", "site", "expected_hostname", "vlan", "network",
-                      "gateway", "role", "access_ports")
+        if k not in _EXCLUDED_KEYS
     }
     conn_params.setdefault("device_type", "cisco_ios")
 
@@ -49,8 +57,7 @@ def ping_inter_sites(source_device, target_ip, logger):
     """
     conn_params = {
         k: v for k, v in source_device.items()
-        if k not in ("kind", "site", "expected_hostname", "vlan", "network",
-                      "gateway", "role", "access_ports")
+        if k not in _EXCLUDED_KEYS
     }
     conn_params.setdefault("device_type", "cisco_ios")
 
