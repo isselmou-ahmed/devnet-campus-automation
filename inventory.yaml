@@ -22,7 +22,7 @@ sites:
         - prefix: 10.20.20.0
           mask: 255.255.255.0
           next_hop: 192.168.10.2
-        - prefix: 10.20.20.0
+        - prefix: 10.30.30.0
           mask: 255.255.255.0
           next_hop: 192.168.10.3
     switches:
@@ -30,7 +30,7 @@ sites:
         host: 192.168.10.11
         device_type: cisco_ios
         role: coeur
-        access_ports: []
+        access_ports: [Ethernet0/0]
       - name: SW3-ACC
         host: 192.168.10.13
         device_type: cisco_ios
@@ -59,7 +59,7 @@ sites:
         host: 192.168.10.12
         device_type: cisco_ios
         role: coeur
-        access_ports: []
+        access_ports: [Ethernet0/0]
       - name: SW4-ACC
         host: 192.168.10.14
         device_type: cisco_ios
@@ -88,7 +88,7 @@ sites:
           host: 192.168.10.15
           device_type: cisco_ios
           role: coeur
-          access_ports: []
+          access_ports: [Ethernet0/0]
         - name: SW5-ACC
           host: 192.168.10.16
           device_type: cisco_ios

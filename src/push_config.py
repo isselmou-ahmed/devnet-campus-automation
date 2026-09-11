@@ -33,7 +33,14 @@ def _connect_with_autodetect(device):
         if k not in EXCLUDED_KEYS
     }
     base_params["disabled_algorithms"] = {
-        "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"]
+        "pubkeys": ["rsa-sha2-256", "rsa-sha2-512"],
+        "kex": [
+            "diffie-hellman-group16-sha512",
+            "diffie-hellman-group-exchange-sha256",
+            "diffie-hellman-group14-sha256",
+            "diffie-hellman-group18-sha512",
+        ],
+
     }
     guesser = SSHDetect(**{**base_params, "device_type": "autodetect"})
     best_match = guesser.autodetect()
