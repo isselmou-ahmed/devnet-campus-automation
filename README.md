@@ -33,6 +33,14 @@ pip install -r requirements.txt
 cp .env.example .env   # puis renseigner NET_USERNAME / NET_PASSWORD / NET_SECRET
 ```
 
+```windows
+git clone <url-du-depot>
+cd devnet-campus-automation
+python -m venv .venv 
+.venv\Scripts\activate.bat
+pip install -r requirements.txt
+copy .env.example .env   # puis renseigner NET_USERNAME / NET_PASSWORD / NET_SECRET
+```
 ## Exécution
 
 ```bash
